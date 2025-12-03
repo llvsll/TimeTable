@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Time Table</title>
+</head>
+
+<body>
+
+    <h2>Додати запис</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Додати</button>
+</form>
+
+<hr>
+
+<h2>Розклад</h2>
+
+{% for day, tasks in tasks_by_day.items %}
+    <h3>{{ day }}</h3>
+
+    {% if tasks %}
+        <ul>
+            {% for t in tasks %}
+                <li>
+                    {{ t.time|time:"H:i" }} — {{ t.title }}
+                    {% if t.complete %}(✔){% endif %}
+                    <a href="{% url 'edit' t.id %}">Редагувати</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Немає записів</p>
+    {% endif %}
+{% endfor %}
+
+
+
+</body>
+
+</html>
