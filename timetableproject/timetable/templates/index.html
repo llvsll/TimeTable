@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Time Table</title>
+</head>
+
+<body>
+
+    <h2>Додати запис</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Додати</button>
+</form>
+
+<hr>
+
+<h2>Розклад (Тижневий календар)</h2>
+
+<table border="1" cellpadding="10" style="border-collapse: collapse; width: 100%; text-align:left;">
+    <tr>
+        {% for day, tasks in calendar.items %}
+            <th style="width: 14%; text-align:center;">{{ day }}</th>
+        {% endfor %}
+    </tr>
+
+    <tr>
+        {% for day, tasks in calendar.items %}
+            <td valign="top">
+                {% if tasks %}
+                    {% for t in tasks %}
+                        <div style="margin-bottom: 10px;">
+                            <strong>{{ t.time|time:"H:i" }}</strong> — {{ t.title }}
+                            <br>
+                            <a href="{% url 'edit' t.id %}">Редагувати</a> |
+                            <a href="{% url 'confirm_delete' t.id %}" style="color:red;">Видалити</a>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <em>Немає записів</em>
+                {% endif %}
+            </td>
+        {% endfor %}
+    </tr>
+</table>
+
+
+
+</body>
+
+</html>

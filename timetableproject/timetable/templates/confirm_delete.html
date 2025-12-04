@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Підтвердження видалення</title>
+</head>
+<body>
+
+<h2>Видалити запис?</h2>
+
+<p><strong>{{ task.title }}</strong></p>
+<p>{{ task.day }} — {{ task.time|time:"H:i" }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button formaction="{% url 'delete' task.id %}" type="submit" style="color:red;">
+        Так, видалити
+    </button>
+
+    <button onclick="window.history.back(); return false;">
+        Скасувати
+    </button>
+</form>
+
+</body>
+</html>

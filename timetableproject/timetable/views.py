@@ -4,28 +4,29 @@ from .forms import TaskForm
 
 
 def index(request):
-    tasks_by_day = {}
+    tasks = Task.objects.all().order_by("day", "time")
 
-    for key, label in DAYS:
-        tasks = Task.objects.filter(day=key).order_by("time")
-        tasks_by_day[label] = tasks
+    DAYS_ORDERED = [
+        "Понеділок",
+        "Вівторок",
+        "Середа",
+        "Четвер",
+        "П’ятниця",
+        "Субота",
+        "Неділя",
+    ]
+
+    calendar = {day: [] for day in DAYS_ORDERED}
+
+    for task in tasks:
+        if task.day in calendar:
+            calendar[task.day].append(task)
+        else:
+            calendar.setdefault("Невідомо", []).append(task)
 
     form = TaskForm()
 
-    if request.method == "POST":
-        form = TaskForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("home")
-
-    return render(
-        request,
-        "index.html",
-        {
-            "form": form,
-            "tasks_by_day": tasks_by_day,
-        },
-    )
+    return render(request, "index.html", {"form": form, "calendar": calendar})
 
 
 def edit_task(request, pk):
@@ -39,3 +40,14 @@ def edit_task(request, pk):
             return redirect("home")
 
     return render(request, "edit.html", {"form": form})
+
+
+def confirm_delete(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    return render(request, "confirm_delete.html", {"task": task})
+
+
+def delete_task(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    task.delete()
+    return redirect("home")
